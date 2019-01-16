@@ -415,6 +415,21 @@ module.exports = function (webpackEnv) {
                 getLocalIdent: getCSSModuleLocalIdent,
               }),
             },
+            {
+              test: /\.less$/,
+              use: [
+                require.resolve('style-loader'),
+                {
+                  loader: require.resolve('css-loader'),
+                  options: {
+                    importLoaders: 1,
+                  },
+                },
+                {
+                  loader: require.resolve('less-loader') // compiles Less to CSS
+                }
+              ],
+            },
             // Opt-in support for SASS (using .scss or .sass extensions).
             // By default we support SASS Modules with the
             // extensions .module.scss or .module.sass
