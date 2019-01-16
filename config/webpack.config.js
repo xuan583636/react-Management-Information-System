@@ -349,6 +349,7 @@ module.exports = function (webpackEnv) {
                       },
                     },
                   ],
+        
                 ],
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                 // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -416,19 +417,29 @@ module.exports = function (webpackEnv) {
               }),
             },
             {
-              test: /\.less$/,
-              use: [
-                require.resolve('style-loader'),
+              test: lessRegex,
+              exclude: lessModuleRegex,
+              use: getStyleLoaders(
                 {
-                  loader: require.resolve('css-loader'),
-                  options: {
-                    importLoaders: 1,
-                  },
+                  importLoaders: 2,
+                  sourceMap: isEnvProduction && shouldUseSourceMap,
                 },
+                'less-loader'
+              ),
+              sideEffects: true,
+            },
+            // Adds support for CSS Modules, but using LESS
+            {
+              test: lessModuleRegex,
+              use: getStyleLoaders(
                 {
-                  loader: require.resolve('less-loader') // compiles Less to CSS
-                }
-              ],
+                  importLoaders: 2,
+                  sourceMap: isEnvProduction && shouldUseSourceMap,
+                  modules: true,
+                  getLocalIdent: getCSSModuleLocalIdent,
+                },
+                'less-loader'
+              ),
             },
             // Opt-in support for SASS (using .scss or .sass extensions).
             // By default we support SASS Modules with the
